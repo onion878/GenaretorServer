@@ -11,7 +11,7 @@ import (
 var connect *xorm.Engine
 
 func StartPool() {
-	engine, err := xorm.NewEngine("mysql", "onion:1234@tcp(localhost:3306)/genaretor?charset=utf8")
+	engine, err := xorm.NewEngine("mysql", "onion:1234@tcp(127.0.0.1:3306)/genaretor?charset=utf8")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -34,6 +34,6 @@ func StartPool() {
 	connect = engine
 }
 
-func GetCon() (*xorm.Engine) {
+func GetCon() *xorm.Engine {
 	return connect
 }
