@@ -1,11 +1,14 @@
 package utils
 
 import (
+	"../structs"
 	"bytes"
 	"crypto/tls"
 	"github.com/gin-gonic/gin"
+	"github.com/satori/go.uuid"
 	"gopkg.in/gomail.v2"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -44,31 +47,44 @@ func RandomString(randLength int, randType string) (result string) {
 	return
 }
 
-func ReSuccess(c *gin.Context, data interface{})  {
-	c.JSON(200, gin.H{
-		"success": true,
-		"time": time.Now().Format(time.RFC3339),
-		"data": data,
-	})
+//获取uuid
+func NewKeyId() string {
+	if id, err := uuid.NewV4(); err == nil {
+		return id.String()
+	}
+	return "创建失败!"
 }
 
-func ReFail(c *gin.Context, val interface{})  {
-	c.JSON(200, gin.H{
-		"success": false,
-		"time": time.Now().Format(time.RFC3339),
-		"val": val,
-	})
-}
-
-func SendMail(email string, title string, content string) {
+func SendMail(msg string) {
 	d := gomail.NewDialer("smtp.qq.com", 587, "genaretor@qq.com", "nbvlluxakyzgebji")
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	m := gomail.NewMessage()
 	m.SetHeader("From", "genaretor@qq.com")
-	m.SetHeader("To", email)
-	m.SetHeader("Subject", title)
-	m.SetBody("text/html", content)
+	m.SetHeader("To", "2419186601@qq.com")
+	m.SetHeader("Subject", "资源获取通知!")
+	m.SetBody("text/html", "<b>获取通知</b><br><i>"+msg+"</i>!")
+
+	// Send emails using d.
 	if err := d.DialAndSend(m); err != nil {
 		panic(err)
+	}
+}
+
+func GetPage(c *gin.Context) structs.Page {
+	var page structs.Page
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page.Limit = limit
+	start, _ := strconv.Atoi(c.Query("start"))
+	page.Start = start
+	name := string(c.Query("name"))
+	page.Name = name
+	p, _ := strconv.Atoi(c.Query("page"))
+	page.Page = p
+	return page
+}
+
+func SendError(msg string) interface{} {
+	return gin.H{
+		"msg": msg,
 	}
 }

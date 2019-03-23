@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"../structs"
 	"fmt"
+
+	"../structs"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
@@ -11,7 +12,7 @@ import (
 var connect *xorm.Engine
 
 func StartPool() {
-	engine, err := xorm.NewEngine("mysql", "onion:1234@tcp(10.139.178.65:3306)/genaretor?charset=utf8")
+	engine, err := xorm.NewEngine("mysql", "root:root@tcp(localhost:3306)/generate?charset=utf8")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -29,8 +30,12 @@ func StartPool() {
 	engine.SetMaxOpenConns(5)
 	//名称映射规则主要负责结构体名称到表名和结构体field到表字段的名称映射
 	engine.SetTableMapper(core.SnakeMapper{})
-	engine.CreateTables(new(structs.RegisterCache))
 	engine.CreateTables(new(structs.User))
+	engine.CreateTables(new(structs.Cookies))
+	engine.CreateTables(new(structs.Index))
+	engine.CreateTables(new(structs.Chapter))
+	engine.CreateTables(new(structs.Template))
+	engine.CreateTables(new(structs.TemplateDetail))
 	connect = engine
 }
 
