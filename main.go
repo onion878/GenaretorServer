@@ -187,8 +187,10 @@ func main() {
 			detail.Info = info
 			t.CreateDetail(detail)
 			c.JSON(200, gin.H{
-				"success": true,
-				"message": "上传成功!",
+				"success":  true,
+				"message":  "上传成功!",
+				"serveId":  id,
+				"detailId": fileId,
 			})
 		})
 

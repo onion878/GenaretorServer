@@ -1,9 +1,8 @@
 package utils
 
 import (
-	"fmt"
-
 	"../structs"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
@@ -12,7 +11,11 @@ import (
 var connect *xorm.Engine
 
 func StartPool() {
-	engine, err := xorm.NewEngine("mysql", "root:root@tcp(localhost:3306)/generate?charset=utf8")
+	props, err := ReadPropertiesFile("properties")
+	if err != nil {
+		fmt.Println("Error while reading properties file")
+	}
+	engine, err := xorm.NewEngine("mysql", props["username"]+":"+props["password"]+"@tcp("+props["url"]+":3306)/"+props["database"]+"?charset=utf8")
 	if err != nil {
 		fmt.Println(err)
 		return
